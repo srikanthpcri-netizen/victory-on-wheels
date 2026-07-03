@@ -18,6 +18,25 @@ export class AuthService {
       return;
     }
 
+    const firebaseProjectId = process.env.FIREBASE_PROJECT_ID;
+    const firebaseClientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    const firebasePrivateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(
+      /\\n/g,
+      '\n',
+    );
+
+    if (firebaseProjectId && firebaseClientEmail && firebasePrivateKey) {
+      initializeApp({
+        credential: cert({
+          projectId: firebaseProjectId,
+          clientEmail: firebaseClientEmail,
+          privateKey: firebasePrivateKey,
+        }),
+      });
+
+      return;
+    }
+
     const serviceAccountPath = path.join(
       process.cwd(),
       'firebase-service-account.json',
@@ -25,7 +44,7 @@ export class AuthService {
 
     if (!fs.existsSync(serviceAccountPath)) {
       throw new Error(
-        'Firebase service account file not found. Please add firebase-service-account.json in backend/api folder.',
+        'Firebase Admin credentials missing. Add FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY in Railway variables.',
       );
     }
 
