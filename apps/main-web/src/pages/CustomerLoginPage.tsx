@@ -130,9 +130,14 @@ export default function CustomerLoginPage() {
 
       alert("Customer login successful");
       navigate("/customer");
-    } catch (error) {
-      console.error(error);
-      alert("Invalid OTP or login failed. Please try again.");
+    } catch (error: any) {
+      console.error("Customer login error:", error);
+
+      alert(
+        `${error?.code || "Login Error"}\n\n${
+          error?.message || "Invalid OTP or login failed. Please try again."
+        }`,
+      );
     } finally {
       setLoading(false);
     }
