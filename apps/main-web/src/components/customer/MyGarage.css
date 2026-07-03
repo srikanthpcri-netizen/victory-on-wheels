@@ -1,0 +1,44 @@
+.my-garage-list {
+  display: grid;
+  gap: 14px;
+}
+
+.my-garage-card {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.my-garage-title {
+  margin: 0 0 8px;
+  color: #111;
+}
+
+.my-garage-meta {
+  margin: 6px 0 0;
+  color: #666;
+}
+
+.my-garage-badge {
+  display: inline-block;
+  background: #111;
+  color: #d4af37;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.my-garage-empty {
+  color: #777;
+}
+
+@media (max-width: 700px) {
+  .my-garage-card {
+    flex-direction: column;
+  }
+}

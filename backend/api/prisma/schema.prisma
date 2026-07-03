@@ -1,0 +1,332 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id             String          @id @default(uuid())
+  name           String?
+  phone          String          @unique
+  email          String?
+  address        String?
+  role           Role
+  serviceCenters ServiceCenter[]
+  createdAt      DateTime        @default(now())
+}
+
+enum Role {
+  CUSTOMER
+  SERVICE_CENTER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  READY_FOR_DELIVERY
+  COMPLETED
+  CANCELLED
+}
+
+enum JobCardStatus {
+  CREATED
+  INSPECTION_PENDING
+  INSPECTION_DONE
+  WORK_IN_PROGRESS
+  READY
+  DELIVERED
+  CLOSED
+}
+
+enum SparePartType {
+  OEM
+  OES
+}
+
+enum SparePartRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ORDERED
+  RECEIVED
+}
+
+model ServiceCenter {
+  id                String             @id @default(uuid())
+  name              String
+  city              String
+  address           String?
+  phone             String             @unique
+  password          String?
+  status            String             @default("ACTIVE")
+
+  creditLimit       Float              @default(0)
+  usedCredit        Float              @default(0)
+  outstandingAmount Float              @default(0)
+
+  userId            String?
+  user              User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  bookings          Booking[]
+  sparePartRequests SparePartRequest[]
+
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model Booking {
+  id                String        @id @default(uuid())
+  customerName      String
+  customerPhone     String
+  vehicleNumber     String
+
+  vehicleId         String?
+  vehicle           Vehicle?      @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+
+  vehicleType       String?
+  vehicleBrand      String?
+  vehicleModel      String?
+  manufacturingYear Int?
+  fuelType          String?
+  transmission      String?
+  odometer          Int?
+
+  pickupRequired    Boolean       @default(false)
+  emergencyService  Boolean       @default(false)
+  preferredTimeSlot String?
+
+  serviceType       String
+  bookingDate       DateTime
+  status            BookingStatus @default(PENDING)
+  notes             String?
+
+  serviceCenterId   String
+  serviceCenter     ServiceCenter @relation(fields: [serviceCenterId], references: [id], onDelete: Cascade)
+
+  jobCard           JobCard?
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+model Vehicle {
+  id                 String    @id @default(uuid())
+
+  customerPhone      String
+  ownerName          String
+
+  vehicleType        String
+  vehicleBrand       String
+  vehicleModel       String
+
+  registrationNumber String    @unique
+
+  manufacturingYear  Int?
+  fuelType           String?
+  transmission       String?
+  odometer           Int?
+  color              String?
+
+  isDefault          Boolean   @default(false)
+
+  bookings           Booking[]
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model JobCard {
+  id                     String              @id @default(uuid())
+  bookingId              String              @unique
+  booking                Booking             @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  vehicleNumber          String
+  serviceType            String
+  problemNotes           String?
+
+  status                 JobCardStatus       @default(CREATED)
+
+  estimatedAmount        Float?
+  labourAmount           Float?
+  finalAmount            Float?
+  additionalCharges      Float?              @default(0)
+  additionalChargeReason String?
+
+  addOns                 AddOn[]
+  invoice                Invoice?
+  attachments            JobCardAttachment[]
+
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+}
+
+model AddOn {
+  id          String   @id @default(uuid())
+  jobCardId   String
+  jobCard     JobCard  @relation(fields: [jobCardId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String?
+  price       Float
+  status      String   @default("PENDING")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Invoice {
+  id                     String               @id @default(uuid())
+  jobCardId              String               @unique
+  invoiceNumber          String               @unique
+
+  serviceAmount          Float                @default(0)
+  additionalCharges      Float                @default(0)
+  additionalChargeReason String?
+  discountAmount         Float                @default(0)
+  taxableAmount          Float                @default(0)
+  gstPercentage          Float                @default(18)
+  gstAmount              Float                @default(0)
+  totalAmount            Float                @default(0)
+  paidAmount             Float                @default(0)
+  dueAmount              Float                @default(0)
+
+  gstin                  String?
+  notes                  String?
+
+  jobCard                JobCard              @relation(fields: [jobCardId], references: [id], onDelete: Cascade)
+  items                  InvoiceItem[]
+  paymentTransactions    PaymentTransaction[]
+
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+}
+
+model InvoiceItem {
+  id          String   @id @default(uuid())
+  invoiceId   String
+
+  slNo        Int
+  description String
+  hsnSac      String?
+  qty         Float    @default(1)
+  unit        String?
+  rate        Float    @default(0)
+  taxable     Float    @default(0)
+  cgstPercent Float    @default(9)
+  cgstAmount  Float    @default(0)
+  sgstPercent Float    @default(9)
+  sgstAmount  Float    @default(0)
+  total       Float    @default(0)
+
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PaymentTransaction {
+  id              String   @id @default(uuid())
+  invoiceId       String
+  amount          Float
+  paymentMethod   String
+  referenceNumber String?
+  notes           String?
+  createdAt       DateTime @default(now())
+
+  invoice         Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+}
+
+model InsuranceEnquiry {
+  id                     String   @id @default(uuid())
+  fullName               String
+  mobileNumber           String
+  email                  String?
+  city                   String
+  vehicleType            String
+  vehicleBrand           String
+  vehicleModel           String
+  registrationNumber     String
+  manufacturingYear      Int
+  previousPolicyProvider String?
+  insuranceType          String?
+  policyExpiryDate       DateTime?
+  claimHistory           String?
+  additionalNotes        String?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model SparePart {
+  id          String                 @id @default(uuid())
+  name        String
+  partNumber  String?                @unique
+  category    String?
+  brand       String?
+  unit        String?
+  stockQty    Int                    @default(0)
+  price       Float                  @default(0)
+  isActive    Boolean                @default(true)
+  type        SparePartType          @default(OEM)
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+
+  requestItems SparePartRequestItem[]
+
+  @@map("spare_parts")
+}
+
+model SparePartRequest {
+  id              String                  @id @default(uuid())
+  serviceCenterId String
+  paymentMode     String
+  paidAmount      Float                   @default(0)
+  totalAmount     Float                   @default(0)
+  creditAmount    Float                   @default(0)
+  status          SparePartRequestStatus  @default(PENDING)
+  notes           String?
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+
+  serviceCenter   ServiceCenter           @relation(fields: [serviceCenterId], references: [id], onDelete: Cascade)
+  items           SparePartRequestItem[]
+}
+
+model SparePartRequestItem {
+  id                 String             @id @default(uuid())
+  sparePartRequestId String
+  sparePartId        String
+  quantity           Int
+  unitPrice          Float              @default(0)
+  lineTotal          Float              @default(0)
+  snapshotName       String
+  snapshotPartNumber String
+  snapshotCategory   String
+  snapshotBrand      String
+  snapshotType       SparePartType
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  sparePartRequest   SparePartRequest   @relation(fields: [sparePartRequestId], references: [id], onDelete: Cascade)
+  sparePart          SparePart          @relation(fields: [sparePartId], references: [id], onDelete: Cascade)
+}
+
+model JobCardAttachment {
+  id        String   @id @default(uuid())
+  jobCardId String
+  fileUrl   String
+  fileName  String
+  fileType  String
+  category  String
+  notes     String?
+
+  jobCard   JobCard  @relation(fields: [jobCardId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
