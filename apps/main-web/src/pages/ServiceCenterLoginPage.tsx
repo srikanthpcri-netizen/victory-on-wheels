@@ -36,7 +36,7 @@ export default function ServiceCenterLoginPage() {
       setLoading(true);
 
       const response = await fetch(
-        "http://localhost:3000/auth/service-center-login",
+        "https://victory-on-wheels-production.up.railway.app/auth/service-center-login",
         {
           method: "POST",
           headers: {

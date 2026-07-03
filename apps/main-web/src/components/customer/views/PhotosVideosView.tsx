@@ -1,3 +1,4 @@
+import API_BASE_URL from "../../../config/api";
 type Attachment = {
   id: string;
   fileUrl: string;
@@ -52,7 +53,7 @@ export default function PhotosVideosView({ attachments }: Props) {
             >
               {file.fileType.startsWith("image") ? (
                 <img
-                  src={`http://localhost:3000${file.fileUrl}`}
+                  src={`${API_BASE_URL}${file.fileUrl}`}
                   alt={file.fileName}
                   style={{
                     width: "100%",
@@ -70,7 +71,7 @@ export default function PhotosVideosView({ attachments }: Props) {
                   }}
                 >
                   <source
-                    src={`http://localhost:3000${file.fileUrl}`}
+                    src={`https://victory-on-wheels-production.up.railway.app${file.fileUrl}`}
                     type={file.fileType}
                   />
                 </video>

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import API_BASE_URL from "../../../config/api";
 
 type InvoiceItem = {
   id: string;
@@ -37,7 +38,7 @@ type InvoiceData = {
   jobCard?: any;
 };
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+const API_BASE = API_BASE_URL;
 
 function money(value?: number) {
   return `₹${Number(value || 0).toLocaleString("en-IN", {

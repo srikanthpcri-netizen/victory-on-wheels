@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./ServiceCenterJobCard.css";
 
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = "https://victory-on-wheels-production.up.railway.app";
 
 type JobCardAttachment = {
   id: string;

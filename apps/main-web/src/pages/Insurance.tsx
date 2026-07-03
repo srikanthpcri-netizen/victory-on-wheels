@@ -144,7 +144,7 @@ export default function Insurance() {
           .join(" | "),
       };
 
-      await axios.post("http://localhost:3000/insurance", payload);
+      await axios.post("https://victory-on-wheels-production.up.railway.app/insurance", payload);
 
       setSuccessMessage("Insurance enquiry submitted successfully!");
       resetForm();

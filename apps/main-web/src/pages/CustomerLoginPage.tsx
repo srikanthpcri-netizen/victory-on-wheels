@@ -103,7 +103,7 @@ export default function CustomerLoginPage() {
       const firebaseIdToken = await firebaseUserCredential.user.getIdToken();
 
       const res = await fetch(
-        "http://localhost:3000/auth/firebase-customer-login",
+        "https://victory-on-wheels-production.up.railway.app/auth/firebase-customer-login",
         {
           method: "POST",
           headers: {

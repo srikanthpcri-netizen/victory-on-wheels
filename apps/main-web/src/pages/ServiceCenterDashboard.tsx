@@ -77,7 +77,7 @@ export default function ServiceCenterDashboard() {
           localStorage.getItem("serviceCenterToken") ||
           localStorage.getItem("serviceCenterAccessToken");
 
-        const response = await fetch("http://localhost:3000/booking", {
+        const response = await fetch("https://victory-on-wheels-production.up.railway.app/booking", {
           headers: token
             ? {
                 Authorization: `Bearer ${token}`,

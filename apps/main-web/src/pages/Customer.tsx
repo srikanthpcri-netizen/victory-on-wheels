@@ -148,7 +148,7 @@ export default function Customer() {
   const fetchServiceCenters = async () => {
     try {
       setLoadingCenters(true);
-      const res = await fetch("http://localhost:3000/service-center");
+      const res = await fetch("https://victory-on-wheels-production.up.railway.app/service-center");
       const data = await res.json();
 
       if (!res.ok) {
@@ -170,7 +170,7 @@ export default function Customer() {
   const fetchBookings = async () => {
     try {
       setLoadingBookings(true);
-      const res = await fetch("http://localhost:3000/booking");
+      const res = await fetch("https://victory-on-wheels-production.up.railway.app/booking");
       const data = await res.json();
 
       if (!res.ok) {
@@ -196,7 +196,7 @@ export default function Customer() {
       setLoadingVehicles(true);
 
       const res = await fetch(
-        `http://localhost:3000/vehicle?customerPhone=${customerPhone}`,
+        `https://victory-on-wheels-production.up.railway.app/vehicle?customerPhone=${customerPhone}`,
       );
       const data = await res.json();
 
@@ -221,7 +221,7 @@ export default function Customer() {
       setLoadingJobCard(true);
 
       const res = await fetch(
-        `http://localhost:3000/job-card/customer/latest?customerPhone=${customerPhone}`,
+        `https://victory-on-wheels-production.up.railway.app/job-card/customer/latest?customerPhone=${customerPhone}`,
       );
 
       if (res.status === 404) {
@@ -270,7 +270,7 @@ export default function Customer() {
     try {
       setSubmitting(true);
 
-      const res = await fetch("http://localhost:3000/booking", {
+      const res = await fetch("https://victory-on-wheels-production.up.railway.app/booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
