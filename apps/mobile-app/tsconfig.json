@@ -1,4 +1,26 @@
 {
-  "compilerOptions": {},
-  "extends": "expo/tsconfig.base"
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "expo-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".expo",
+    ".claude",
+    "eas-archive",
+    "dist",
+    "build"
+  ]
 }
